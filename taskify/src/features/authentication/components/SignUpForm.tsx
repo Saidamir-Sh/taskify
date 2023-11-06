@@ -9,14 +9,23 @@ function SignUpForm() {
     e.preventDefault();
     const requestData = JSON.stringify(signUpForm);
   
-    axios.post('https://taskifybackend-e8c4a5c6b28b.herokuapp.com/api/auth/signup/', requestData, {
+    axios.post('http://127.0.0.1:8000/api/auth/signup/', requestData, {
       headers: {
         'Content-Type': 'application/json'
       }
     })
     .then((response) => {
-      console.log(response.data); // Log the response data
-      // Do something with the response data, if needed
+      console.log(response.data);
+      axios.post('http://127.0.0.1:8000/api/auth/login/', requestData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((res) => {
+        if (res.data.access) {
+          localStorage.setItem("user", JSON.stringify(res.data));
+        }
+        console.log(res)
+      })
     })
     .catch((error) => {
       console.error('Error:', error); // Log any errors
