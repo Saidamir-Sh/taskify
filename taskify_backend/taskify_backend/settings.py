@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-(@lt+u+)xguplt+*7subus!8i)rgmhw!)o-2c(c58s7vp)#e&@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://localhost:5173/']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
-    'accounts'
 ]
 
 REST_FRAMEWORK = {
@@ -149,7 +148,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-AUTH_USER_MODEL = 'accounts.User'
 
 django_heroku.settings(locals())
