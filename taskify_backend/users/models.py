@@ -1,4 +1,4 @@
-from django.apps import app
+from django.apps import apps
 from django.db import models
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.contrib.contenttypes.fields import GenericRelation
