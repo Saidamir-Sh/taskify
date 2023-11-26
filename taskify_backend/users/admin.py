@@ -12,7 +12,7 @@ from .models import User
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (('Basic Info'), {'fields': ('username', 'email', 'first_name', 'last_name', 'profile_pic', 'password')}),
-        (('Permission'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permission')}),
+        (('Permission'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
 
