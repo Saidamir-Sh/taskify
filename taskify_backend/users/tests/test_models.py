@@ -33,6 +33,6 @@ class TestUserModel:
         with pytest.raises(ValidationError):
             if user.full_clean():
                 user.save()
-        assert User.objects.filter(user_name='johndoe@example.com').count() == 0
+        assert User.objects.filter(username='johndoe@example.com').count() == 0
 
 # TODO  - test user login
