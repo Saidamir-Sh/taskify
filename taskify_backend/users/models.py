@@ -47,10 +47,8 @@ class User(AbstractUser):
     last_name = models.CharField(max_length=255, blank=False, null=False)
     profile_pic = models.ImageField(blank=True, upload_to='profile_pic')
 
-    # TODO complete after creating boards modal
-
-    # boards = GenericRelation()
-    # starred_boards = models.ManyToManyField
+    boards = GenericRelation('boards.Board', object_id_field='owner_id', content_type_field='owner_model')
+    starred_boards = models.ManyToManyField('boards.Board', blank=True)
 
     objects = CustomUserManager()
 

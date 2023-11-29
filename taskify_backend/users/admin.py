@@ -2,12 +2,11 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from .models import User
 
-# TODO Use when Boards model created
-# class BoardsInline(admin.TabularInline):
-#     model = User.starred_boards.through
-#     verbose_name = "Starred Board"
-#     verbose_name_plural = "Starred Boards"
-#     extra = 0
+class BoardsInline(admin.TabularInline):
+    model = User.starred_boards.through
+    verbose_name = "Starred Board"
+    verbose_name_plural = "Starred Boards"
+    extra = 0
 
 class UserAdmin(DjangoUserAdmin):
     fieldsets = (
@@ -20,8 +19,7 @@ class UserAdmin(DjangoUserAdmin):
         (None, {'fields': ('username', 'email', 'first_name', 'last_name', 'profile_pic', 'password1', 'password2')}),
     )
 
-    # TODO after creating Boards model
-    # inlines = [BoardsInline]
+    inlines = [BoardsInline]
 
 
 admin.site.register(User, UserAdmin)
