@@ -58,3 +58,12 @@ class Item(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        filtered_objects = Item.objects.filter(list=self.list)
+        if not self.order and filtered_objects.count() == 0:
+            self.order = 2 ** 16 - 1
+        elif not self.order:
+            self.order = filtered_objects.aggregate(Max('order'))[
+                'order_max'] + 2 ** 16 - 1
+        return super().save(*args, **kwargs)
