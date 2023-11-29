@@ -24,4 +24,37 @@ class Board(models.Model):
     def __str__(self):
         return self.title
 
+class List(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='lists')
+    title = models.CharField(max_length=255, blank=False, null=True)
+    order = models.DecimalField(max_digits=30, decimal_places=15, blank=False, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return self.title
+    
+class Label(models.Model):
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels')
+    title = models.CharField(max_length=255, blank=True, null=False)
+    color = models.CharField(max_length=6, blank=False, null=False)
+
+    def __str__(self):
+        return self.title
+    
+class Item(models.Model):
+    list = models.ForeignKey(List, on_delete=models.CASCADE, related_name='items')
+    title = models.CharField(max_length=255, blank=False, null=False)
+    description = models.TextField(blank=True, null=False)
+
+    image = models.ImageField(blank=True, upload_to='item_images')
+    image_url = models.URLField(blank=True, null=False)
+    color = models.CharField(max_length=6, blank=True, null=False)
+
+    order = models.DecimalField(max_digits=30, decimal_places=15, blank=True, null=False)
+    labels = models.ManyToManyField(Label, blank=True)
+    assigned_to = models.ManyToManyField(User, blank=True)
+    due_date = models.DateTimeField(blank=True, null=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
