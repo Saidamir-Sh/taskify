@@ -67,3 +67,51 @@ class Item(models.Model):
             self.order = filtered_objects.aggregate(Max('order'))[
                 'order_max'] + 2 ** 16 - 1
         return super().save(*args, **kwargs)
+    
+class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='comments')
+    body = models.TextField(blank=False, null=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'{self.body[:50]}{"..." if len(self.body) > 50 else ""}'
+    
+class Attachment(models.Model):
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='attachments')
+    upload = models.FileField(upload_to='attachments')
+
+extra_word_dict = {'commented': 'on'}
+
+class Notification(models.Model):
+    actor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='actions')
+    recipient = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    verb = models.CharField(max_length=255, blank=False, null=False)
+    unread = models.BooleanField(default=True, blank=False, db_index=True)
+
+    created_at = models.DateTimeField(default=timezone.now)
+
+    # Optional, <actor> opened <board>
+    target_model = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True, related_name='target_obj')
+    target_id = models.PositiveIntegerField(null=True, blank=True)
+    target = GenericForeignKey('target_model', 'target_id')
+
+    action_object_model = models.ForeignKey(ContentType, on_delete=models.CASCADE, blank=True, null=True, related_name='action_object_obj')
+    action_object_id = models.PositiveIntegerField(null=True, blank=True)
+    action_object = GenericForeignKey('action_object_model', 'action_object_id')
+
+    def __str__(self):
+        if self.target:
+            if self.action_object:
+                return f"{self.actor.full_name} {self.verb} {self.action_object} {extra_word_dict[self.verb]} {self.target}"
+            else:
+                return f"{self.actor.full_name} {self.verb} {self.target}"
+        else:
+            return f"{self.actor.full_name} {self.verb}"
+        
+    """
+    <actor> commented <comment> on <item>, you were assigned to this item
+    <actor> assigned you to <item>
+    <actor> invited you to <project>
+    <actor> made you admin of <project>
+    """
