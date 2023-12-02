@@ -92,3 +92,18 @@ class ShortBoardSerializer(serializers.ModelSerializer):
                 "A board background must be provided"
             )
         return data
+    
+class BoardSerializer(ShortBoardSerializer):
+    lists = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Board
+        fields = ['id', 'title', 'description', 'image', 'image_url', 'color', 'created_at', 'owner', 'lists', 'is_starred',]
+
+    def get_lists(self, obj):
+        queryset = List.objects.filter(board=obj).order_by('order')
+        return ListSerializer(queryset, many=True).data
+    
+    def validate(self, data):
+        return data # No need to pass in image/image_url/color while editing board
+    
