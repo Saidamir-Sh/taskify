@@ -107,3 +107,32 @@ class BoardSerializer(ShortBoardSerializer):
     def validate(self, data):
         return data # No need to pass in image/image_url/color while editing board
     
+class NotificationSerializer(serializers.ModelSerializer):
+    actor = UserSerializer(read_only=True)
+    target_model = serializers.SerializerMethodField()
+    target = serializers.SerializerMethodField()
+    action_object = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Notification
+        fields = ['id', 'actor', 'verb', 'target_model', 'target', 'action_object', 'unread', 'created_at']
+
+    def get_target_model(self, obj):
+        object_name = obj.target._meta.object_name
+        return object_name
+    
+    def get_target(self, obj):
+        object_app = obj.target._meta.app_label
+        object_name = obj.target._meta.object_name
+        if object_name == 'Project':
+            object_name = 'Short' + object_name
+        serializer_module_path = f"{object_app}.serializers.{object_name}Serializer"
+        serializer_class = import_string(serializer_module_path)
+        return serializer_class(obj.target).data
+    
+    def get_action_object(self, obj):
+        object_app = obj.action_object._meta.app_label
+        object_name = obj.action_object._meta.object_name
+        serializer_module_path = f"{object_app}.serializers.{object_name}Serializer"
+        serializer_class = import_string(serializer_module_path)
+        return serializer_class(obj.action_object).data
