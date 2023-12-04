@@ -14,4 +14,8 @@ class Project(models.Model):
 
     def __str__(self):
         return self.title
-    
+
+class ProjectMembership(models.Model):
+    class Access(models.IntegerChoices):
+        MEMBER = 1 # can view, create and move own items
+        ADMIN = 2 # can remove members and modify project settings
