@@ -19,3 +19,14 @@ class ProjectMembership(models.Model):
     class Access(models.IntegerChoices):
         MEMBER = 1 # can view, create and move own items
         ADMIN = 2 # can remove members and modify project settings
+
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    member = models.ForeignKey(User, on_delete=models.CASCADE)
+    access_level = models.IntegerField(choices=Access.choices)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.member.full_name}, {self.project.title}"
+    
+    class Meta:
+        unique_together = ('project')
