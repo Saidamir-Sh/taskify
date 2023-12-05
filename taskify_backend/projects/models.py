@@ -29,4 +29,4 @@ class ProjectMembership(models.Model):
         return f"{self.member.full_name}, {self.project.title}"
     
     class Meta:
-        unique_together = ('project')
+        unique_together = ('project', 'member')
