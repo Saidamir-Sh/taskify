@@ -42,3 +42,27 @@ class ProjectList(mixins.ListModelMixin, mixins.CreateModelMixin,
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
     
+class ProjectDetail(APIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [IsProjectAdminOrMemberReadOnly]
+
+    def get(self, request, pk):
+        proj = get_object_or_404(Project, pk=pk)
+        self.check_object_permissions(self.request, proj)
+        serializer = ProjectSerializer(proj, context={"request": request})
+        return Response(serializer.data)
+    
+    def put(self, request, pk):
+        proj = get_object_or_404(Project, pk=pk)
+        self.check_object_permissions(self.request, proj)
+        serializer = ProjectSerializer(proj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        proj = get_object_or_404(Project, pk=pk)
+        self.check_object_permissions(self.request, proj)
+        proj.delete()
+        return Response(status=status.HTTP_200_OK)
