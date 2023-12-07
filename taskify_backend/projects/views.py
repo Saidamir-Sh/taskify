@@ -66,3 +66,55 @@ class ProjectDetail(APIView):
         self.check_object_permissions(self.request, proj)
         proj.delete()
         return Response(status=status.HTTP_200_OK)
+
+class ProjectMemberList(mixins.ListModelMixin, 
+                        generics.GenericAPIView,
+                        mixins.CreateModelMixin
+                        ):
+    serializer_class = ProjectMembershipSerializer
+    permission_classes = [IsProjectAdminOrMemberReadOnly]
+
+    def get_queryset(self):
+        try:
+            project = Project.objects.get(pk=self.kwargs['pk'])
+            query_set = ProjectMembership.objects.filter(project=project)
+        except:
+            raise Http404
+        return query_set
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+class ProjectMemberDetail(APIView):
+    serializer_class = ProjectMembershipSerializer
+    permission_classes = [IsProjectAdminOrMemberReadOnly]
+
+    def get_object(self, pk):
+        obj = get_object_or_404(ProjectMembership, pk=pk)
+        self.check_object_permissions(self.request, obj.project)
+        return obj
+    
+    def put(self, request, pk):
+        pmem = self.get_object(pk)
+        serializer = ProjectMembershipSerializer(
+            pmem, data=request.data, context={"request": request})
+        if serializer.is_valid():
+            serializer.save()
+
+            # Notification
+            if request.data['access_level'] == 2:
+                Notification.objects.create(
+                    actor=request.user, recipient=pmem.member,
+                    verb='made you admin of', target=pmem.project)
+            else:
+                Notification.objects.filter(
+                    verb='made you admin of', recipient=pmem.member,
+                    target_model=ContentType.objects.get(model='project'), target_id=pmem.project.id).delete()
+            
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self, request, pk):
+        pmem = self.get_object(pk)
+        pmem.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
