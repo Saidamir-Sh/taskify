@@ -118,3 +118,9 @@ class ProjectMemberDetail(APIView):
         pmem = self.get_object(pk)
         pmem.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+site_url = "https://localhost:8000"
+r = redis.Redis(
+    host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB,
+    charset="utf-8", decode_responses=True
+)

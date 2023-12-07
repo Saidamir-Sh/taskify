@@ -162,4 +162,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
 
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6380
+REDIS_DB = 0
+
 django_heroku.settings(locals())
