@@ -163,3 +163,30 @@ class SendPRojectInvite(APIView):
             except User.DoesNotExist:
                 continue
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class AcceptProjectInvite(APIView):
+    def post(self, request, token, format=None):
+        redis_key = f'ProjectInvitation:{token}'
+        invitation_exists = r.exists(redis_key)
+        if invitation_exists == False:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        # Invitation is valid
+        invitation_details = r.hgetall(redis_key)
+        user_id = invitation_details["user"]
+        project_id = invitation_details["project"]
+        try:
+            user = User.objects.get(pk=user_id)
+            project = Project.objects.get(pk=project_id)
+        except(User.DoesNotExist, Project.DoesNotExist):
+            user = None
+
+        if user is not None and ProjectMembership.objects.filter(project=project, member=user).exists() == False:
+            ProjectMembership.objects.create(project=project, member=user)
+            r.delete(redis_key)
+
+            # Notify user
+            Notification.objects.filter(verb='invited you to', recipient=user, target_model=ContentType.objects.get(model='project'), target_id=project.id).delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else :
+            return Response(status=status.HTTP_400_BAD_REQUEST)
