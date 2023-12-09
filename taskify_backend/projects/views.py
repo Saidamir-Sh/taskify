@@ -119,8 +119,47 @@ class ProjectMemberDetail(APIView):
         pmem.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-site_url = "https://localhost:8000"
+site_url = "https://localhost:8000/"
 r = redis.Redis(
     host=settings.REDIS_HOST, port=settings.REDIS_PORT, db=settings.REDIS_DB,
     charset="utf-8", decode_responses=True
 )
+
+class SendPRojectInvite(APIView):
+    permission_classes = [IsProjectAdminOrMemberReadOnly]
+
+    def get_object(self, pk):
+        project = get_object_or_404(Project, pk=pk)
+        self.check_object_permissions(self.request, project)
+        return project
+    
+    def post(self, request, pk):
+        project = self.get_object(pk)
+        users = request.data.get('users', None)
+
+        if users is None:
+            return Response({"error": "No users provided"}, status=status.HTTP_400_BAD_REQUEST)
+        for username in users:
+            try:
+                user = User.objects.get(username=username)
+                # can't invite a member
+                if ProjectMembership.objects.filter(project=project, member=user).exists() or project.owner == user:
+                    continue
+                token = str(uuid.uuid4())
+                redis_key = f'ProjectInvitation:{token}'
+                r.hmset(redis_key, {"user": user.id, "project": project.id})
+                subject = f'{request.user.full_name} has invited you to join {project.title}'
+                message = (f'Click on the following link to accept: {site_url}projects/join'
+                           f'/{token}')
+                to_email = user.email
+
+                # if from_email=None, use DEFAULT_FORM_EMAIL form settings.py
+                send_mail(subject, message, from_email=None, recipient_list=[to_email])
+
+                # Notify the user
+                Notification.objects.create(
+                    actor=request.user, recipient=user, verb='invited you to', target=project
+                )
+            except User.DoesNotExist:
+                continue
+        return Response(status=status.HTTP_204_NO_CONTENT)
