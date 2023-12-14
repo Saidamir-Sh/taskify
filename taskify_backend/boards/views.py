@@ -96,3 +96,26 @@ class BoardDetail(generics.RetrieveUpdateDestroyAPIView):
            serializer.save(image=None, color="")
        elif "color" in req_data:
            serializer.save(image=None, image_url="")
+
+class BoardStar(APIView):
+    permission_classes = [CanViewBoard]
+
+    def get_board(self, pk):
+        board = get_object_or_404(Board, pk=pk)
+        self.check_object_permissions(self.request, board)
+        return board
+    
+    def post(self, request, *args, **kwargs):
+        if 'board' in request.data.keys():
+            board_id = request.data["board"]
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        board = self.get_board(board_id)
+
+        if request.user.starred_boards.filter(pk=board.pk).exists():
+            request.user.starred_boards.remove(board)
+        else:
+            request.user.starred_boards.add(board)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
