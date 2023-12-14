@@ -70,3 +70,29 @@ class BoardList(generics.ListCreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class BoardDetail(generics.RetrieveUpdateDestroyAPIView):
+   serializer_class = BoardSerializer
+   permission_classes = [CanViewBoard]
+
+   def get_queryset(self, *args, **kwargs):
+       project_ids = ProjectMembership.objects.filter(
+           member=self.request.user).values_list('project__id', flat=True)
+       return Board.objects.filter(Q(owner_id=self.request.user.id, owner_model=ContentType.objects.get(model='user')) |
+                                   Q(owner_id__in=project_ids, owner_model=ContentType.objects.get(model='project')))
+
+   def get_object(self):
+       board_id = self.kwargs.get('pk')
+       redis_key = f"{self.request.user.username}: RecentlyViewBoards"
+       cur_time_int = int(timezone.now().strftime("%Y%m%d%H%M%S"))
+       r.zadd(redis_key, {board_id: cur_time_int})
+       return super().get_object()
+   
+   def perform_update(self, serializer):
+       req_data = self.request.data
+       if "image" in req_data:
+           serializer.save(image_url="", color="")
+       elif "image_url" in req_data:
+           serializer.save(image=None, color="")
+       elif "color" in req_data:
+           serializer.save(image=None, image_url="")
