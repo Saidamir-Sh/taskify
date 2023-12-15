@@ -119,3 +119,17 @@ class BoardStar(APIView):
             request.user.starred_boards.add(board)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class ListShow(generics.ListCreateAPIView):
+    serializer_class = ListSerializer
+    permission_classes = [CanViewBoard]
+
+    def get_board(self, pk):
+        board = get_object_or_404(Board, pk=pk)
+        self.check_object_permissions(self.request, board)
+        return board
+    
+    def get_queryset(self):
+        board_id = self.request.GET.get('board', None)
+        board =self.get_board(board_id)
+        return List.objects.filter(board=board).order_by('order')
