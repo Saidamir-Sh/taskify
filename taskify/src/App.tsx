@@ -1,6 +1,7 @@
 import React from 'react'
 import './App.css'
 import SignUpForm from './features/authentication/components/SignUpForm'
+import { Button } from './components/Elements/Button/button'
 
 function App() {
 
@@ -15,6 +16,8 @@ function App() {
           <p className="text-slate-500">You have a new message!</p>
         </div>
       </div>
+      <Button variant="primary" onClick={() => console.log('Clicked')}>Primary</Button>
+
     </div>
   )
 }
