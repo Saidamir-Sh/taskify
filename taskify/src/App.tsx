@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import SignUpForm from './features/authentication/components/SignUpForm'
-import { Button } from './components/Elements/Button/button'
+import { Button } from './components/Elements/Button'
 
 function App() {
 
