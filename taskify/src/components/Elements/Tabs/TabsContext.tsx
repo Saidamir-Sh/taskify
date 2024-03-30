@@ -33,5 +33,5 @@ export const useTabsContext = (): TabsContextProps => {
     if(context === undefined) {
         throw new Error("useTabsContext must be used within TabsProvider")
     }
-    return context
+    return context;
 }
