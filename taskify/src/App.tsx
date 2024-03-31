@@ -1,4 +1,5 @@
 import './App.css';
+import { Accordion, AccordionDetail, AccordionTitle } from './components/Elements/Accordion';
 import { Button } from './components/Elements/Button';
 import { Tabs } from './components/Elements/Tabs';
 import mockData from './mockDatas';
@@ -14,6 +15,23 @@ function App() {
         <Tabs.Titles items={mockData.map(({id, title}) => ({id, title}))}/>
         <Tabs.Content items={mockData.map(({ id, content }) => ({id, content}))}/>
       </Tabs>
+
+      <Accordion>
+        <AccordionTitle index={1}>Introduction</AccordionTitle>
+        <AccordionDetail index={1}>
+          Welcome to our platform! In this introductory tab, you'll find information
+        </AccordionDetail>
+
+        <AccordionTitle index={2}>Features</AccordionTitle>
+        <AccordionDetail index={2}>
+        Explore the extensive features of our product in this tab. From advanced analytics to seamless integration, we've got you covered.
+        </AccordionDetail>
+
+        <AccordionTitle index={3}>Benefits</AccordionTitle>
+        <AccordionDetail index={3}>
+        Discover the numerous benefits of using our services. From increased productivity to cost savings, see how we can help your business grow.
+        </AccordionDetail>
+      </Accordion>
 
     </div>
   )

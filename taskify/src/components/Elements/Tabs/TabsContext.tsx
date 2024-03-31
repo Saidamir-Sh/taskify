@@ -30,7 +30,7 @@ export const TabsProvider: React.FC<TabsProviderProps> = ({ children }) => {
 export const useTabsContext = (): TabsContextProps => {
     const context = useContext(TabsContext);
 
-    if(context === undefined) {
+    if(!context) {
         throw new Error("useTabsContext must be used within TabsProvider")
     }
     return context;
