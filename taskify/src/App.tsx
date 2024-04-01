@@ -39,7 +39,6 @@ function App() {
         type="text"
         inputName="customInput"
         placeholder="Enter your password..."
-        variant='outlined'
         onChange={(e) => console.log(e.target.value)}
       />
 

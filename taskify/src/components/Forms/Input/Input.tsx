@@ -1,26 +1,9 @@
-import React, { ChangeEvent, InputHTMLAttributes } from "react";
+import React from "react";
+import clsx from "clsx";
+import { InputProps, variants } from "./types";
 
-type InputTypes = "text" | "number" | "email" | "password";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-    id: string;
-    type: InputTypes;
-    inputName: string;
-    label?: string;
-    errors?: boolean;
-    placeholder?: string;
-    disabled?: boolean;
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    variant?: keyof typeof variants;
-}
-
-export const variants = {
-    outlined: 'block w-full outline-none rounded-md border py-1.5 px-2 bg-grey',
-    filled: 'bg-red-600 text-white',
-    standard: 'block w-full outline-none rounded-md border py-1.5 px-2'
-};
-
-export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({ id, type, inputName, label, errors, placeholder, variant='standard', disabled, onChange, ...rest }, ref) {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Input({ id, type, inputName, label, errors, placeholder, variant='outlined', disabled, onChange, ...rest }, ref) {
     return (
         <div>
             {label && 
@@ -38,7 +21,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(function Inp
                 placeholder={placeholder}
                 onChange={onChange}
                 disabled={disabled}
-                className={variants[variant]}
+                className={clsx("flex justify-center items-center w-full outline-none rounded-s py-1.5 px-2", 
+                variants[variant])}
                 {...rest}
             />
             {errors && <span className="text-sm text-red-600">Input has error.</span>}
