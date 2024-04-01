@@ -2,6 +2,7 @@ import './App.css';
 import { Accordion, AccordionDetail, AccordionTitle } from './components/Elements/Accordion';
 import { Button } from './components/Elements/Button';
 import { Tabs } from './components/Elements/Tabs';
+import { Input } from './components/Forms/Input';
 import mockData from './mockDatas';
 
 function App() {
@@ -32,6 +33,15 @@ function App() {
         Discover the numerous benefits of using our services. From increased productivity to cost savings, see how we can help your business grow.
         </AccordionDetail>
       </Accordion>
+
+      <Input
+        id="customInput"
+        type="text"
+        inputName="customInput"
+        placeholder="Enter your password..."
+        variant='outlined'
+        onChange={(e) => console.log(e.target.value)}
+      />
 
     </div>
   )
