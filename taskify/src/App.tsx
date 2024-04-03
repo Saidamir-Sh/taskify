@@ -2,13 +2,14 @@ import './App.css';
 import { Accordion, AccordionDetail, AccordionTitle } from './components/Elements/Accordion';
 import { Button } from './components/Elements/Button';
 import { Tabs } from './components/Elements/Tabs';
+import { AutoComplete } from './components/Forms/AutoComplete';
 import { Input } from './components/Forms/Input';
 import mockData from './mockDatas';
 
 function App() {
 
   return (
-    <div>
+    <div className='flex flex-col gap-4 max-w-4xl mx-auto min-h-full'>
       <Button variant="primary" onClick={() => console.log('Clicked')}>Primary</Button>
       <Button variant="danger" onClick={() => console.log('Clicked')}>Primary</Button>
 
@@ -40,6 +41,12 @@ function App() {
         inputName="customInput"
         placeholder="Enter your password..."
         onChange={(e) => console.log(e.target.value)}
+      />
+
+      <AutoComplete
+        id="customAutoComplete"
+        placeholder='Countries...'
+        options={["Algeria", "Bangladesh", "Congo", "Denmark"]}
       />
 
     </div>
