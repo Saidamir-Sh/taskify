@@ -7,6 +7,7 @@ import { Tabs } from './components/Elements/Tabs';
 import { AutoComplete } from './components/Forms/AutoComplete';
 import { Input } from './components/Forms/Input';
 import mockData from './mockDatas';
+import { Tooltip } from './components/Elements/ToolTip';
 
 function App() {
   const [rateValue, setRateValue] = useState<number>(0)
@@ -61,6 +62,10 @@ function App() {
       />
 
       <Rating totalRate={5} onChange={handleRateOnChange}/>
+
+      <Tooltip title='This is button'>
+      <Button variant="primary">Show Tooltip</Button>
+      </Tooltip>
 
     </div>
   )
