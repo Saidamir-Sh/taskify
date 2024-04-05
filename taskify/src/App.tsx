@@ -1,12 +1,23 @@
+import { useEffect, useState } from 'react';
 import './App.css';
 import { Accordion, AccordionDetail, AccordionTitle } from './components/Elements/Accordion';
 import { Button } from './components/Elements/Button';
+import { Rating } from './components/Elements/Rating';
 import { Tabs } from './components/Elements/Tabs';
 import { AutoComplete } from './components/Forms/AutoComplete';
 import { Input } from './components/Forms/Input';
 import mockData from './mockDatas';
 
 function App() {
+  const [rateValue, setRateValue] = useState<number>(0)
+
+  const handleRateOnChange = (value: number) => {
+    setRateValue(value)
+  }
+
+  useEffect(() => {
+    console.log(rateValue)
+  }, [rateValue])
 
   return (
     <div className='flex flex-col gap-4 max-w-4xl mx-auto min-h-full'>
@@ -48,6 +59,8 @@ function App() {
         placeholder='Countries...'
         options={["Algeria", "Bangladesh", "Congo", "Denmark"]}
       />
+
+      <Rating totalRate={5} onChange={handleRateOnChange}/>
 
     </div>
   )
