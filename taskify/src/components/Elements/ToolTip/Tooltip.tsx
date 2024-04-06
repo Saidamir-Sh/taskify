@@ -6,7 +6,7 @@ const tooltipPosition = {
   right: "",
   bottom: "",
   left: ""
-}
+} // TODO: create css
 
 interface ToolTipProps {
   title: string;
@@ -27,7 +27,7 @@ export const Tooltip: React.FC<ToolTipProps> = ({ title, position = "bottom", ch
         {children}
       </div>
       <div
-        className={clsx("",
+        className={clsx("", // TODO: style the tooltip component
           tooltipPosition[position],
           showToolTip ? "block" : "hidden"
         )}
