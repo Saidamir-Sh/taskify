@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import { Accordion, AccordionDetail, AccordionTitle } from './components/Elements/Accordion';
 import { Button } from './components/Elements/Button';
@@ -8,17 +8,23 @@ import { AutoComplete } from './components/Forms/AutoComplete';
 import { Input } from './components/Forms/Input';
 import mockData from './mockDatas';
 import { Tooltip } from './components/Elements/ToolTip';
+import { Modal } from './components/Elements/Modal';
 
 function App() {
   const [rateValue, setRateValue] = useState<number>(0)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+  }
+
+  const openModal = () => {
+    setIsModalOpen(true)
+  }
 
   const handleRateOnChange = (value: number) => {
     setRateValue(value)
   }
-
-  useEffect(() => {
-    console.log(rateValue)
-  }, [rateValue])
 
   return (
     <div className='flex flex-col gap-4 max-w-4xl mx-auto min-h-full'>
@@ -64,8 +70,14 @@ function App() {
       <Rating totalRate={5} onChange={handleRateOnChange}/>
 
       <Tooltip title='This is button'>
-      <Button variant="primary">Show Tooltip</Button>
+        <Button variant="primary">Show Tooltip</Button>
       </Tooltip>
+      <Button onClick={openModal}>Open Modal</Button>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <p>This is paragraph</p>
+        <Button onClick={closeModal}>Close</Button>
+      </Modal>
 
     </div>
   )
